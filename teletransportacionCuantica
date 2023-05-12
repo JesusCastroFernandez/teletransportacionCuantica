@@ -1,0 +1,30 @@
+from qiskit import QuantumCircuit, execute, Aer
+
+# Definir los tres qubits que se van a utilizar
+qc = QuantumCircuit(3, 3)
+
+# Preparar el estado del primer qubit (qubit 0)
+qc.h(0)
+qc.barrier()
+
+# Crear un par entrelazado de qubits (qubits 1 y 2)
+qc.h(1)
+qc.cx(1, 2)
+qc.barrier()
+
+# Realizar una operación de medición en los tres qubits
+qc.cx(0, 1)
+qc.h(0)
+qc.measure([0,1],[0,1])
+qc.cx(1, 2)
+qc.cz(0, 2)
+qc.measure(2,2)
+
+# Ejecutar el circuito cuántico en un simulador
+backend = Aer.get_backend('qasm_simulator')
+job = execute(qc, backend, shots=1024)
+result = job.result()
+counts = result.get_counts(qc)
+
+# Imprimir los resultados de la simulación
+print(counts)
